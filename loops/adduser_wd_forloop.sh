@@ -2,7 +2,7 @@
 MYUSER="ALPHA BETA GAMMA"
 for usr in $MYUSER
 do
-  echo "Exectuing loop "
+  echo "Adding USER $usr "
   adduser $usr
   id $usr
   echo "User $usr Added Successfully....."
