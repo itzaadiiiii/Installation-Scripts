@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Function to uninstall Java 17
+uninstall_java17() {
+  sudo apt remove -y openjdk-17-jdk
+}
+
+# Function to uninstall Jenkins
+uninstall_jenkins() {
+  sudo systemctl stop jenkins
+  sudo systemctl disable jenkins
+  sudo apt remove -y jenkins
+  sudo rm -rf /var/lib/jenkins
+  sudo rm -rf /etc/systemd/system/jenkins.service
+}
+
+# Function to delete the Jenkins user and group
+delete_jenkins_user_group() {
+  sudo userdel -r jenkins
+}
+
+# Uninstall Java 17
+echo "Uninstalling Java 17..."
+uninstall_java17
+
+# Uninstall Jenkins
+echo "Uninstalling Jenkins..."
+uninstall_jenkins
+
+# Delete the Jenkins user and group
+echo "Deleting Jenkins user and group..."
+delete_jenkins_user_group
+
+echo "Java 17, Jenkins, and the associated user and group have been uninstalled successfully."
