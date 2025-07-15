@@ -10,3 +10,15 @@ iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocola
 ```
 choco --version
 ```
+## 3) List all packages Installed using Chocolaty:
+```
+choco list
+```
+## 4) Search for a package :
+```
+choco search <name>
+```
+## 5) Upgrade all installed packages :
+```
+choco upgrade all -y
+```
