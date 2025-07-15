@@ -1,4 +1,4 @@
-# Steps
+# Steps :
 ## 1) Open Powershell as Adminstrator and run below command :
 ```
 Set-ExecutionPolicy Bypass -Scope Process -Force; `
