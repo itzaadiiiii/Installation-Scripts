@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Detect OS
-OS=$(grep -i ^id /etc/os-release | cut -d'=' -f2 | tr -d '"')
+# Get primary OS ID
+OS=$(grep ^ID= /etc/os-release | head -n1 | cut -d= -f2 | tr -d '"')
 
 echo "Detected OS: $OS"
 
@@ -19,20 +19,18 @@ setup_ssh() {
         sudo systemctl enable sshd
         sudo systemctl start sshd
     else
-        echo "Unsupported OS."
+        echo "Unsupported OS: $OS"
         exit 1
     fi
 }
 
-# Function to configure session timeout
+# Function to configure session timeout to 1 hour (3600 seconds)
 configure_timeout() {
     echo "Configuring session timeout to 1 hour..."
 
-    # 1 hour = 3600 seconds
     sudo bash -c 'echo "ClientAliveInterval 3600" >> /etc/ssh/sshd_config'
     sudo bash -c 'echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config'
 
-    # Restart SSH service
     if [[ "$OS" == "ubuntu" ]]; then
         sudo systemctl restart ssh
     else
@@ -40,8 +38,9 @@ configure_timeout() {
     fi
 }
 
-# Execute functions
+# Run functions
 setup_ssh
 configure_timeout
 
 echo "✅ SSH and 1-hour timeout setup complete."
+
