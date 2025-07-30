@@ -12,7 +12,7 @@ echo "===== Checking Maven version ====="
 mvn -version
 
 echo "===== Installing Java (OpenJDK 17) ====="
-sudo apt install -y fontconfig openjdk-17-jre
+sudo apt install fontconfig openjdk-21-jre
 
 echo "===== Checking Java version ====="
 java -version
