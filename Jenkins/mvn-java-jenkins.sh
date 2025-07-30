@@ -69,3 +69,11 @@ if [ -f "$initial_pass_file" ]; then
 else
     echo "❌ Cannot find Jenkins initial admin password at $initial_pass_file"
 fi
+
+echo "===== Fetching EC2 Public IP for Jenkins Access ====="
+public_ip=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "Not Available")
+if [[ "$public_ip" != "Not Available" ]]; then
+    echo "🌐 Access Jenkins at: http://${public_ip}:8080"
+else
+    echo "❌ Could not fetch EC2 public IP (may be local VM or missing metadata)"
+fi
