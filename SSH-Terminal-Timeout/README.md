@@ -1,11 +1,12 @@
 ## How to Use:
-### 1)Save it as setup_ssh.sh
+### 1) Save it as setup_ssh.sh
 
 Run:
 ```
 chmod +x setup_ssh.sh
 sudo ./setup_ssh.sh
 ```
+---
 ## To use universal ie passing argument to script as per your need example: 1h or 30min to pass-arg-ssh-timeout.sh 
 ### for pass-arg-ssh-timeout.sh
 ```
