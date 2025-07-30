@@ -1,50 +1,70 @@
 #!/bin/bash
 
 # Script: ec2-terminal-color-setup.sh
-# Purpose: Enhance EC2 shell usability with colored command prompt and output.
-# OS Support: Amazon Linux, CentOS, Ubuntu
+# Purpose: Enhance EC2 terminal with mint-colored file-type output and styled prompt
+# Supports: Amazon Linux, Ubuntu, CentOS
 
-echo "🔧 Setting up colorized terminal prompt and output..."
+echo "🔧 Setting up custom terminal theme with mint green LS_COLORS..."
 
-# Detect shell config file
-if [ -n "$ZSH_VERSION" ]; then
-    SHELL_RC="$HOME/.zshrc"
-else
-    SHELL_RC="$HOME/.bashrc"
-fi
+SHELL_RC="$HOME/.bashrc"
 
-# Backup original shell config
+# Backup current shell config
 cp "$SHELL_RC" "$SHELL_RC.bak.$(date +%s)"
 
-# Append color configuration to shell config
+# Create a custom dircolors file with mint-toned colors
+cat << 'EOF' > ~/.dircolors.mint
+# Custom LS_COLORS in mint green shades
+# Format: <type>=[attributes]
+# ANSI color codes used: 151, 120, 122, 159 (all mint shades)
+
+# General types
+DIR 01;38;5;120
+LINK 01;38;5;122
+EXEC 01;38;5;151
+FIFO 01;38;5;159
+SOCK 01;38;5;151
+BLK 01;38;5;120
+CHR 01;38;5;120
+ORPHAN 01;38;5;122
+MISSING 01;38;5;122
+
+# File extensions
+*.sh=01;38;5;151
+*.txt=01;38;5;122
+*.log=01;38;5;120
+*.json=01;38;5;159
+*.yml=01;38;5;151
+*.yaml=01;38;5;151
+*.env=01;38;5;122
+*.conf=01;38;5;120
+*.md=01;38;5;159
+EOF
+
+# Append shell enhancements to .bashrc
 cat << 'EOF' >> "$SHELL_RC"
 
-# === Enable color for ls, grep ===
+# === Color support ===
 export CLICOLOR=1
-export LS_OPTIONS='--color=auto'
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-# === Use dircolors if available ===
-if command -v dircolors &> /dev/null && [ -r ~/.dircolors ]; then
-  eval "$(dircolors -b ~/.dircolors)"
+# === Apply custom minty dircolors ===
+if command -v dircolors &> /dev/null; then
+  eval "$(dircolors -b ~/.dircolors.mint)"
 fi
 
-# === Colored Prompt: Commands Green, Output Light Blue ===
-# Commands = Green, Output = Cyan/Light Blue
-PS1='\[\e[1;32m\]\u@\h:\w\n\$\[\e[0m\] '
-PROMPT_COMMAND='echo -ne "\033[1;36m"'
+# === Custom Prompt ===
+# Top line: dusty pink (#A53860 → 131)
+# Command input: teal-blue (#219EBC → 74)
+# Output: mint variant via PROMPT_COMMAND + LS_COLORS
+PS1='\[\e[38;5;131m\]\u@\h:\w\n\[\e[38;5;74m\]\$\[\e[0m\] '
+PROMPT_COMMAND='echo -ne "\033[0;38;5;151m"'
 trap "echo -ne '\033[0m'" DEBUG
 EOF
 
-# Generate default ~/.dircolors (optional, safe)
-if command -v dircolors &> /dev/null; then
-    dircolors -p > ~/.dircolors
-fi
-
-# Apply changes now
+# Apply settings now
 source "$SHELL_RC"
 
-echo -e "\n✅ Terminal color setup complete! Test with: ls -l, cd, grep"
+echo -e "\n✅ Mint-themed terminal ready! Try: ls, touch file.sh, mkdir test\n"
