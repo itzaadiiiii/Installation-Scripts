@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# Detect OS
-OS=$(grep -i ^id /etc/os-release | cut -d'=' -f2 | tr -d '"')
+# Get OS type (ubuntu, amzn, etc.)
+OS=$(grep ^ID= /etc/os-release | head -n1 | cut -d= -f2 | tr -d '"')
 
 echo "Detected OS: $OS"
 
-# Function to install and start SSH
+# Timeout = 30 minutes = 1800 seconds
+TIMEOUT=1800
+
 setup_ssh() {
     echo "Installing and enabling SSH..."
 
@@ -19,20 +21,21 @@ setup_ssh() {
         sudo systemctl enable sshd
         sudo systemctl start sshd
     else
-        echo "Unsupported OS."
+        echo "Unsupported OS: $OS"
         exit 1
     fi
 }
 
-# Function to configure session timeout
 configure_timeout() {
-    echo "Configuring session timeout to 30 minutes..."
+    echo "Setting SSH session timeout to 30 minutes..."
 
-    # 30 minutes = 1800 seconds
-    sudo bash -c 'echo "ClientAliveInterval 1800" >> /etc/ssh/sshd_config'
-    sudo bash -c 'echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config'
+    CONFIG="/etc/ssh/sshd_config"
+    sudo sed -i '/^ClientAliveInterval/d' $CONFIG
+    sudo sed -i '/^ClientAliveCountMax/d' $CONFIG
 
-    # Restart SSH service
+    echo "ClientAliveInterval $TIMEOUT" | sudo tee -a $CONFIG
+    echo "ClientAliveCountMax 0" | sudo tee -a $CONFIG
+
     if [[ "$OS" == "ubuntu" ]]; then
         sudo systemctl restart ssh
     else
@@ -40,8 +43,9 @@ configure_timeout() {
     fi
 }
 
-# Execute functions
 setup_ssh
 configure_timeout
 
-echo "✅ SSH and timeout setup complete."
+echo "✅ SSH installed and 30-minute timeout configured."
+
+
