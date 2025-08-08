@@ -71,7 +71,13 @@ else
 fi
 
 echo "===== Fetching EC2 Public IP for Jenkins Access ====="
-public_ip=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "Not Available")
+
+token=$(curl -sX PUT "http://169.254.169.254/latest/api/token" \
+  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+
+public_ip=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 \
+  -H "X-aws-ec2-metadata-token: $token" || echo "Not Available")
+
 if [[ "$public_ip" != "Not Available" ]]; then
     echo "🌐 Access Jenkins at: http://${public_ip}:8080"
 else
